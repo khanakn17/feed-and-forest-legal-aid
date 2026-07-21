@@ -4,9 +4,9 @@
 // =========================
 
 // Custom Razorpay Payment
-alert('script loaded');
 
-const payBtn = document.getElementById("payBtn");
+
+
 
 if (payBtn) {
 
