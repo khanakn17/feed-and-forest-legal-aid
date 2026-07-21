@@ -226,10 +226,13 @@ onclick="window.open('https://rzp.io/rzp/0oBQj3T','_blank')">
 
         <div class="custom-amount">
             <label>Enter Your Amount</label>
-            <input type="number" placeholder="₹ Enter Amount">
+            <input type="number" placeholder="₹ Enter Amount"
+            id="amount"
+            min="10">
+            
         </div>
 
-        <a href="#" class="primary-btn">❤️ Donate Securely</a>
+        <button id="payBtn" class="primary-btn">❤️ Donate now</button>
 
     </div>
 
@@ -780,7 +783,7 @@ target="_blank"
 
 </footer>
 
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="script.js"></script>
 
 </body>

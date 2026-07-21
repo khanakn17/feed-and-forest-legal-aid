@@ -2,149 +2,82 @@
 // FEED & FOREST LEGAL AID
 // script.js
 // =========================
-// Donation Selection
 
-// Fixed Amount Links
+// Custom Razorpay Payment
+alert('script loaded');
 
-const paymentLinks = {
-    "101": "https://rzp.io/rzp/C3SxOWC8",
-    "501": "https://rzp.io/rzp/8HvPPCK",
-    "1100": "https://rzp.io/rzp/ZcbFMDD"
-};
+const payBtn = document.getElementById("payBtn");
 
-donateBtn.addEventListener("click", function(e){
+if (payBtn) {
 
-    e.preventDefault();
+  payBtn.addEventListener("click", async function () {
 
-    if(selectedAmount == "" || selectedAmount <= 0){
+    const amount = document.getElementById("amount").value;
 
-        alert("Please select or enter donation amount.");
+    if (!amount || amount < 10) {
+      alert("Please enter minimum ₹10");
+      return;
+    }
+
+    try {
+
+      const response = await fetch("https://feed-and-forest-legal-aid.onrender.com/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          amount: amount
+        })
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        alert("Unable to create payment.");
         return;
-    }
+      }
 
-    // Fixed Amounts
-    if(paymentLinks[selectedAmount]){
-        window.open(paymentLinks[selectedAmount], "_blank");
-        return;
-    }
+      const options = {
 
-    // Custom Amount (abhi temporary)
-    alert("Custom Amount integration next step me Razorpay Checkout ke saath hogi.");
+        key: data.key,
 
-});
+        amount: data.order.amount,
 
+        currency: data.order.currency,
 
-// Sticky Header Shadow
-const header = document.querySelector("header");
+        name: "Feed And Forest Legal Aid",
 
-window.addEventListener("scroll", () => {
+        description: "Donation",
 
-    if (window.scrollY > 50) {
+        order_id: data.order.id,
 
-        header.style.boxShadow = "0 12px 30px rgba(0,0,0,.15)";
+        handler: function (response) {
 
-    } else {
+          alert("❤️ Thank you for your donation!");
 
-        header.style.boxShadow = "0 5px 20px rgba(0,0,0,.08)";
+          console.log(response);
 
-    }
+        },
 
-});
-
-// =========================
-// Counter Animation
-// =========================
-
-const counters = document.querySelectorAll(".impact-box h2");
-
-const speed = 100;
-
-counters.forEach(counter => {
-
-    const animate = () => {
-
-        const target = parseInt(counter.innerText.replace(/\D/g, ""));
-
-        const count = parseInt(counter.getAttribute("data-count")) || 0;
-
-        const increment = Math.ceil(target / speed);
-
-        if (count < target) {
-
-            counter.setAttribute("data-count", count + increment);
-
-            counter.innerText = (count + increment) + "+";
-
-            setTimeout(animate, 20);
-
-        } else {
-
-            counter.innerText = target + "+";
-
+        theme: {
+          color: "#2E7D32"
         }
 
-    };
+      };
 
-    animate();
+      const rzp = new Razorpay(options);
 
-});
+      rzp.open();
 
-// =========================
-// Scroll Animation
-// =========================
+    } catch (err) {
 
-const observer = new IntersectionObserver((entries) => {
+      console.log(err);
 
-    entries.forEach(entry => {
-
-        if (entry.isIntersecting) {
-
-            entry.target.classList.add("show");
-
-        }
-
-    });
-
-}, {
-
-    threshold: 0.2
-
-});
-
-document.querySelectorAll(".mission-card,.program-card,.gallery-item,.impact-box").forEach((el) => {
-
-    el.classList.add("hidden");
-
-    observer.observe(el);
-
-});
-
-// =========================
-// Active Navigation
-// =========================
-
-const links = document.querySelectorAll("nav a");
-
-links.forEach(link => {
-
-    if (link.href === window.location.href) {
-
-        link.classList.add("active");
+      alert("Server Error");
 
     }
 
-});
-
-// =========================
-// Volunteer Form
-// =========================
-
-const form = document.querySelector(".volunteer-form");
-
-const form = document.querySelector(".volunteer-form");
-
-if (form) {
-  form.addEventListener("submit", function() {
-    alert("Thank you for volunteering with Feed & Forest Legal Aid!");
   });
+
 }
